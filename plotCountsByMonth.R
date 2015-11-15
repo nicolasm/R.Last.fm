@@ -23,11 +23,12 @@ plays <- read.csv("countsByMonth.csv", stringsAsFactors=FALSE, header=TRUE)
 #firstColumn <- plays[,c("count")]
 #firstColumn
 
+
 png("plotCountsByMonth.png",
   width     = 20,
   height    = 10,
   units     = "cm",
-  res       = 1200,
+  res       = 800,
   pointsize = 5)
 
 ######################################
@@ -48,14 +49,14 @@ png("plotCountsByMonth.png",
 # 2 - If csv file has Y_m format
 
 # Convert from y_m
-plays$month <- parse_date_time(plays$month, "y_m")
+plays$month <- parse_date_time(plays$month, "y-m")
 
 #z <- read.zoo(plays)
 
 ######################################
 # 3 - If csv file has Y_m format, xts
 
-z <- xts(plays[-1], order.by = as.yearmon(plays$month, "%Y_%m"))
+z <- xts(plays[-1], order.by = as.yearmon(plays$month, "%Y-%m"))
 
 tt <- time(z)
 ix <- seq_along(tt) 
@@ -64,13 +65,12 @@ labs <- format(tt, fmt)
 
 # Generate months from Oct 2006 to Nov 2015
 # todo: http://www.r-bloggers.com/fix-missing-dates-with-r/
-alldays <- seq(plays$month[1],length= 110, by="+1 month")
+#alldays <- seq(plays$month[1],length= 110, by="+1 month")
 
 loline <- lowess(z, f=.5)
 
-plot.zoo(z, xaxt = "n")
+plot.zoo(z, main="Plays per month since 2006", xlab = "Date", ylab = "Number of plays")
 
-axis(side = 1, at = tt[ix], labels = labs[ix], 
-         tcl = -0.7, cex.axis = 0.7, las = 2)
+#axis(side = 1, at = tt[ix], labels = labs[ix], tcl = -0.7, cex.axis = 0.7, las = 2)
          
 lines(index(z), loline$y, col='red', lwd=2)
